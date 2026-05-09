@@ -17,7 +17,6 @@ const supabase =
     ? createClient(supabaseUrl, supabaseAnonKey)
     : null;
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function todayString() {
   return new Date().toISOString().slice(0, 10);
@@ -71,7 +70,6 @@ function exportToCSV(data, filename) {
 const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const DAY_NAMES = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 
-// ─── Toast System ─────────────────────────────────────────────────────────────
 
 let _toastId = 0;
 let _setToasts = null;
@@ -114,7 +112,7 @@ function ToastContainer() {
   );
 }
 
-// ─── Skeleton Loader ──────────────────────────────────────────────────────────
+
 
 function Skeleton({ className = "" }) {
   return (
@@ -138,8 +136,6 @@ function RoomCardSkeleton() {
   );
 }
 
-// ─── Modal ────────────────────────────────────────────────────────────────────
-
 function Modal({ title, children, onClose, wide = false }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm overflow-y-auto">
@@ -155,8 +151,6 @@ function Modal({ title, children, onClose, wide = false }) {
   );
 }
 
-// ─── Room Details Modal ───────────────────────────────────────────────────────
-
 function RoomDetailsModal({ room, roomBookings, onClose, onBook, isLoggedIn, isGuestView }) {
   const unavailableDates = useMemo(() => bookedDatesFromRanges(roomBookings || []), [roomBookings]);
 
@@ -164,7 +158,7 @@ function RoomDetailsModal({ room, roomBookings, onClose, onBook, isLoggedIn, isG
     if (room.amenities) { try { return JSON.parse(room.amenities); } catch {} }
     const type = (room.room_type || "").toLowerCase();
     if (type === "suite" || type.includes("penthouse"))
-      return ["King Bed", "Private Balcony", "Jacuzzi", "Mini Bar", "City View", "Butler Service", "Free Wi-Fi", "65\" Smart TV", "Nespresso Machine", "Pillow Menu"];
+      return ["King Bed", "Private Balcony", "Jacuzzi", "Mini Bar", "City View", "Butler Service", "Free Wi-Fi", "65\" Smart TV", "Nespresso Machine"];
     if (type === "double" || type.includes("deluxe") || type.includes("superior"))
       return ["Queen Bed", "City View", "Mini Bar", "Free Wi-Fi", "Smart TV", "En-suite Bathroom", "Room Service", "Desk"];
     if (type === "single")
@@ -176,11 +170,11 @@ function RoomDetailsModal({ room, roomBookings, onClose, onBook, isLoggedIn, isG
     if (room.description) return room.description;
     const type = (room.room_type || "").toLowerCase();
     if (type === "suite")
-      return "Indulge in the pinnacle of luxury in our Suite. Featuring a sprawling king-size bed, a private balcony with panoramic city views, a marble jacuzzi, and dedicated butler service — every detail has been crafted for an unforgettable stay.";
+      return "Indulge in the pinnacle of luxury in our Suite. Featuring a sprawling king size bed, a private balcony with panoramic city views, a marble jacuzzi, and dedicated butler service every detail has been crafted for an unforgettable stay.";
     if (type === "double")
-      return "Our Double rooms offer the perfect blend of comfort and practicality. With a plush queen-size bed, elegant furnishings, and modern amenities, it's ideal whether you're travelling for business or leisure.";
+      return "Our Double rooms offer the perfect blend of comfort and practicality. With a queen size bed, modern amenities, it's ideal whether you're travelling for business or leisure.";
     if (type === "single")
-      return "Our Single rooms are compact, comfortable, and thoughtfully designed. Everything you need for a restful stay — a cosy single bed, a smart TV, fast Wi-Fi, and a private en-suite bathroom.";
+      return "Our Single rooms are compact, comfortable, and thoughtfully designed. Everything you need for a restful stay, a cosy single bed, a smart TV, fast Wi-Fi, and a private en-suite bathroom.";
     return `Experience comfort and style in our ${room.room_type}. This well-appointed room offers everything you need for a relaxing stay.`;
   }, [room]);
 
@@ -243,8 +237,6 @@ function RoomDetailsModal({ room, roomBookings, onClose, onBook, isLoggedIn, isG
   );
 }
 
-// ─── Room Type Cards ──────────────────────────────────────────────────────────
-
 function RoomTypeTable({ groupedRooms, allRooms, bookings, search, setSearch, onBookType, onViewRoom, onWaitlist, isGuestView, loadingRooms }) {
   const filteredGroups = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -252,7 +244,7 @@ function RoomTypeTable({ groupedRooms, allRooms, bookings, search, setSearch, on
     return groupedRooms.filter((g) => g.roomType.toLowerCase().includes(term));
   }, [groupedRooms, search]);
 
-  // Also show fully-booked types for waitlist
+
   const bookedGroups = useMemo(() => {
     const availableTypes = new Set(groupedRooms.map((g) => g.roomType));
     const allTypes = new Map();
@@ -281,7 +273,6 @@ function RoomTypeTable({ groupedRooms, allRooms, bookings, search, setSearch, on
         />
       </div>
 
-      {/* Available rooms */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {loadingRooms ? (
           [1,2,3].map((i) => <RoomCardSkeleton key={i} />)
@@ -321,7 +312,6 @@ function RoomTypeTable({ groupedRooms, allRooms, bookings, search, setSearch, on
           })
         )}
 
-        {/* Fully-booked types — show waitlist option */}
         {!loadingRooms && bookedGroups.map(({ roomType, room }) => (
           <div key={roomType}
             className="relative overflow-hidden rounded-2xl border border-slate-700 bg-slate-800 opacity-75">
@@ -351,8 +341,6 @@ function RoomTypeTable({ groupedRooms, allRooms, bookings, search, setSearch, on
   );
 }
 
-// ─── Booking Summary Strip ────────────────────────────────────────────────────
-
 function BookingSummary({ room, checkIn, checkOut, discount }) {
   const nights = nightsBetween(checkIn, checkOut);
   if (!room || !checkIn || !checkOut || nights === 0) return null;
@@ -380,8 +368,6 @@ function BookingSummary({ room, checkIn, checkOut, discount }) {
     </div>
   );
 }
-
-// ─── Waitlist Modal ───────────────────────────────────────────────────────────
 
 function WaitlistModal({ roomType, profile, onClose }) {
   const [email, setEmail] = useState(profile?.email || "");
@@ -431,12 +417,9 @@ function WaitlistModal({ roomType, profile, onClose }) {
   );
 }
 
-// ─── Analytics Dashboard ──────────────────────────────────────────────────────
-
 function AnalyticsDashboard({ bookings, historyBookings, rooms }) {
   const allBookings = useMemo(() => [...bookings, ...historyBookings], [bookings, historyBookings]);
 
-  // Revenue by month (last 12 months)
   const revenueByMonth = useMemo(() => {
     const map = {};
     for (let i = 11; i >= 0; i--) {
@@ -458,12 +441,11 @@ function AnalyticsDashboard({ bookings, historyBookings, rooms }) {
     return Object.values(map);
   }, [allBookings, rooms]);
 
-  // Occupancy by room type
   const occupancyByType = useMemo(() => {
     const typeMap = {};
     for (const room of rooms) {
       if (!typeMap[room.room_type]) typeMap[room.room_type] = { type: room.room_type, totalNights: 0, bookedNights: 0 };
-      typeMap[room.room_type].totalNights += 30; // per month rolling window
+      typeMap[room.room_type].totalNights += 30; 
     }
     for (const b of allBookings) {
       if (b.cancelled || b.status === "Cancelled") continue;
@@ -477,28 +459,26 @@ function AnalyticsDashboard({ bookings, historyBookings, rooms }) {
     })).sort((a, b) => b.occupancy - a.occupancy);
   }, [allBookings, rooms]);
 
-  // Booking heatmap: day of week vs month
   const heatmapData = useMemo(() => {
-    // rows = days, cols = last 6 months
     const months = [];
     for (let i = 5; i >= 0; i--) {
       const d = new Date();
       d.setMonth(d.getMonth() - i);
       months.push({ key: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`, label: MONTH_NAMES[d.getMonth()] });
     }
-    const grid = {}; // grid[dayIdx][monthKey] = count
+    const grid = {}; 
     for (let d = 0; d < 7; d++) { grid[d] = {}; for (const m of months) grid[d][m.key] = 0; }
     for (const b of allBookings) {
       if (!b.check_in) continue;
       const d = new Date(b.check_in);
-      const dow = (d.getDay() + 6) % 7; // 0=Mon
+      const dow = (d.getDay() + 6) % 7;
       const mKey = b.check_in.slice(0, 7);
       if (grid[dow] && grid[dow][mKey] !== undefined) grid[dow][mKey]++;
     }
     return { grid, months, maxVal: Math.max(1, ...Object.values(grid).flatMap((m) => Object.values(m))) };
   }, [allBookings]);
 
-  // Summary stats
+
   const stats = useMemo(() => {
     const totalRevenue = allBookings
       .filter((b) => !b.cancelled && b.status !== "Cancelled")
@@ -672,8 +652,6 @@ function AnalyticsDashboard({ bookings, historyBookings, rooms }) {
   );
 }
 
-// ─── Main App ─────────────────────────────────────────────────────────────────
-
 export default function HotelBookingWebUI() {
   const [session, setSession] = useState(null);
   const [profile, setProfile] = useState(null);
@@ -687,9 +665,9 @@ export default function HotelBookingWebUI() {
   const [loading, setLoading] = useState(false);
   const [loadingRooms, setLoadingRooms] = useState(true);
   const [guestMode, setGuestMode] = useState(false);
-  const [activeTab, setActiveTab] = useState("rooms"); // rooms | bookings | analytics
+  const [activeTab, setActiveTab] = useState("rooms");
 
-  // Booking modal
+
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [selectedRoomGroup, setSelectedRoomGroup] = useState(null);
   const [selectedExactRoom, setSelectedExactRoom] = useState(null);
@@ -699,7 +677,7 @@ export default function HotelBookingWebUI() {
   const [promoLoading, setPromoLoading] = useState(false);
   const [promoError, setPromoError] = useState("");
 
-  // Modals
+
   const [detailsGroup, setDetailsGroup] = useState(null);
   const [detailsRoom, setDetailsRoom] = useState(null);
   const [waitlistType, setWaitlistType] = useState(null);
@@ -714,7 +692,7 @@ export default function HotelBookingWebUI() {
   const isAdmin = !!profile?.is_admin || isOwner;
   const isLoggedIn = !!session && !!profile;
 
-  // ── Auth ──────────────────────────────────────────────────────────────────
+
 
   useEffect(() => {
     if (!supabase) return;
@@ -789,7 +767,7 @@ export default function HotelBookingWebUI() {
     setLoading(false);
   }
 
-  // ── Computed ──────────────────────────────────────────────────────────────
+
 
   const roomStatus = useMemo(() => {
     const map = new Map();
@@ -839,7 +817,6 @@ export default function HotelBookingWebUI() {
     return bookings.filter((b) => Number(b.room_id) === Number(detailsRoom.room_id));
   }, [detailsRoom, bookings]);
 
-  // ── Auth handlers ─────────────────────────────────────────────────────────
 
   async function handleSignup(e) {
     e.preventDefault(); if (!supabase) return;
@@ -877,7 +854,6 @@ export default function HotelBookingWebUI() {
     toast("Signed out.", "info");
   }
 
-  // ── Promo code ────────────────────────────────────────────────────────────
 
   async function applyPromoCode() {
     if (!supabase || !promoCode.trim()) return;
@@ -890,7 +866,6 @@ export default function HotelBookingWebUI() {
       .single();
     setPromoLoading(false);
     if (error || !data) { setPromoError("Invalid or expired promo code."); setPromoDiscount(0); return; }
-    // Check expiry
     if (data.expires_at && new Date(data.expires_at) < new Date()) {
       setPromoError("This promo code has expired."); setPromoDiscount(0); return;
     }
@@ -898,7 +873,6 @@ export default function HotelBookingWebUI() {
     toast(`Promo applied! ${data.discount_percent}% off`, "success");
   }
 
-  // ── Booking handlers ──────────────────────────────────────────────────────
 
   function openBookingModal(group = null, room = null) {
     setSelectedRoomGroup(group);
@@ -961,7 +935,6 @@ export default function HotelBookingWebUI() {
     toast(`${adminEmail} is now an admin.`, "success"); setAdminEmail(""); await loadProfileAndData(); setLoading(false);
   }
 
-  // ─────────────────────────────────────────────────────────────────────────────
 
   const TABS = isLoggedIn
     ? [
